@@ -143,20 +143,14 @@
                     <div class="funnel-wrapper">
                         <div class="chart-container" id="funnelChart"></div>
                         <div class="funnel-insight">
-                            <h4>💡 漏斗洞察</h4>
-                            <div class="insight-list" id="funnelInsight">
-                                <div class="insight-item high-risk">
-                                    <span class="dot"></span>
-                                    <strong>皮肤项目：</strong>咨询→预约环节流失41%，建议优化咨询话术
-                                </div>
-                                <div class="insight-item mid-risk">
-                                    <span class="dot warn"></span>
-                                    <strong>轻医美：</strong>预约→到院流失28%，需加强到院提醒机制
-                                </div>
-                                <div class="insight-item low-risk">
-                                    <span class="dot ok"></span>
-                                    <strong>整形外科：</strong>到院→成交转化率58%，表现优秀
-                                </div>
+                            <h4>💡 流失原因对比 & 建议话术</h4>
+                            <div class="funnel-stage-tabs" id="funnelStageTabs">
+                                <button class="stage-tab active" data-stage="0">曝光→咨询</button>
+                                <button class="stage-tab" data-stage="1">咨询→预约</button>
+                                <button class="stage-tab" data-stage="2">预约→到院</button>
+                                <button class="stage-tab" data-stage="3">到院→成交</button>
+                            </div>
+                            <div class="funnel-reason-detail" id="funnelReasonDetail">
                             </div>
                         </div>
                     </div>
@@ -230,6 +224,42 @@
                                 </tr>
                             </thead>
                             <tbody id="alertTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-row row-recover">
+                <div class="panel panel-large">
+                    <div class="panel-header">
+                        <h3>🎯 今日追回清单 <span class="recover-count" id="recoverCount">0</span></h3>
+                        <div class="action-group">
+                            <button class="action-btn warning" onclick="clearRecoverList()">🗑 清空清单</button>
+                            <button class="action-btn success" onclick="exportRecoverList()">📤 导出追回清单</button>
+                        </div>
+                    </div>
+                    <div class="recover-empty" id="recoverEmpty">
+                        <div class="empty-icon">📋</div>
+                        <p>从预警下钻中勾选线索添加到这里，或点击"加入今日追回清单"</p>
+                    </div>
+                    <div class="recover-table-wrapper" id="recoverTableWrapper" style="display:none;">
+                        <table class="recover-table" id="recoverTable">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="checkAllRecover" onchange="toggleAllRecover(this)"></th>
+                                    <th>优先级</th>
+                                    <th>异常类型</th>
+                                    <th>客户</th>
+                                    <th>意向项目</th>
+                                    <th>预算</th>
+                                    <th>平台</th>
+                                    <th>分配客服</th>
+                                    <th>问题描述</th>
+                                    <th>追回建议</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recoverTableBody"></tbody>
                         </table>
                     </div>
                 </div>
