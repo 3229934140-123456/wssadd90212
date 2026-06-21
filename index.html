@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医美线索经营驾驶舱 | 美团·新氧</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo-icon">◆</div>
+                <h1 class="main-title">医美线索经营驾驶舱</h1>
+                <span class="subtitle">MEITUAN · XINYANG LEADS OPERATION CENTER</span>
+            </div>
+            <div class="header-center">
+                <div class="date-range-selector">
+                    <button class="date-btn active" data-range="today">今日</button>
+                    <button class="date-btn" data-range="yesterday">昨日</button>
+                    <button class="date-btn" data-range="week">近7天</button>
+                    <button class="date-btn" data-range="month">近30天</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="current-time" id="currentTime">--:--:--</div>
+                <div class="current-date" id="currentDate">----年--月--日</div>
+            </div>
+        </header>
+
+        <section class="alert-banner" id="alertBanner">
+            <div class="alert-scroll">
+                <div class="alert-item critical">
+                    <span class="alert-tag">紧急</span>
+                    <span class="alert-text">⚠ 美团平台夜间漏接线索 <strong>23条</strong>，其中高意向客户 <strong>8条</strong></span>
+                    <span class="alert-action" onclick="drillDown('nightMiss')">立即处理 →</span>
+                </div>
+                <div class="alert-item warning">
+                    <span class="alert-tag warn">预警</span>
+                    <span class="alert-text">⚠ 新氧平台首响时长超标 <strong>42%</strong>，平均18分钟（标准≤5分钟）</span>
+                    <span class="alert-action" onclick="drillDown('firstResponse')">查看详情 →</span>
+                </div>
+                <div class="alert-item warning">
+                    <span class="alert-tag warn">预警</span>
+                    <span class="alert-text">⚠ 皮肤项目漏斗流失率 <strong>68%</strong>，主因预约环节断裂</span>
+                    <span class="alert-action" onclick="drillDown('funnel')">分析原因 →</span>
+                </div>
+                <div class="alert-item danger">
+                    <span class="alert-tag">高危</span>
+                    <span class="alert-text">⚠ 高预算客户（≥5万）流失 <strong>12人</strong>，集中在咨询→成交环节</span>
+                    <span class="alert-action" onclick="drillDown('highValue')">追回分析 →</span>
+                </div>
+                <div class="alert-item warning">
+                    <span class="alert-tag warn">预警</span>
+                    <span class="alert-text">⚠ 客服李XX有效线索占比 <strong>28%</strong>，低于团队均值45%</span>
+                    <span class="alert-action" onclick="drillDown('staff')">培训介入 →</span>
+                </div>
+            </div>
+        </section>
+
+        <main class="dashboard-main">
+            <div class="grid-row row-1">
+                <div class="panel panel-kpi">
+                    <div class="panel-header">
+                        <h3>📊 投放概览</h3>
+                        <span class="panel-tip">按平台展示核心转化指标</span>
+                    </div>
+                    <div class="kpi-tabs">
+                        <button class="kpi-tab active" data-platform="all">综合</button>
+                        <button class="kpi-tab" data-platform="meituan">美团</button>
+                        <button class="kpi-tab" data-platform="xinyang">新氧</button>
+                    </div>
+                    <div class="kpi-grid">
+                        <div class="kpi-card kpi-primary">
+                            <div class="kpi-label">线索总量</div>
+                            <div class="kpi-value" id="kpiLeads">1,286</div>
+                            <div class="kpi-trend up">↑ 12.5% vs 昨日</div>
+                        </div>
+                        <div class="kpi-card kpi-success">
+                            <div class="kpi-label">接通率</div>
+                            <div class="kpi-value" id="kpiConnect">78.3%</div>
+                            <div class="kpi-trend down">↓ 3.2% vs 昨日</div>
+                        </div>
+                        <div class="kpi-card kpi-info">
+                            <div class="kpi-label">平均首响</div>
+                            <div class="kpi-value" id="kpiResponse">6.8<span class="kpi-unit">分钟</span></div>
+                            <div class="kpi-trend up">↓ 1.2min vs 昨日</div>
+                        </div>
+                        <div class="kpi-card kpi-warning">
+                            <div class="kpi-label">预约率</div>
+                            <div class="kpi-value" id="kpiBook">35.6%</div>
+                            <div class="kpi-trend up">↑ 2.1% vs 昨日</div>
+                        </div>
+                        <div class="kpi-card kpi-danger">
+                            <div class="kpi-label">到院率</div>
+                            <div class="kpi-value" id="kpiArrive">62.4%</div>
+                            <div class="kpi-trend up">↑ 4.8% vs 昨日</div>
+                        </div>
+                        <div class="kpi-card kpi-purple">
+                            <div class="kpi-label">ROI</div>
+                            <div class="kpi-value" id="kpiRoi">1 : 3.8</div>
+                            <div class="kpi-trend up">↑ 0.5 vs 昨日</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-row row-2">
+                <div class="panel panel-medium">
+                    <div class="panel-header">
+                        <h3>📈 渠道对比</h3>
+                        <span class="panel-tip">美团 vs 新氧 多维指标对比</span>
+                    </div>
+                    <div class="chart-container" id="channelChart"></div>
+                </div>
+                <div class="panel panel-medium">
+                    <div class="panel-header">
+                        <h3>🏥 门店/医生承接</h3>
+                        <div class="filter-group">
+                            <select class="filter-select" id="storeFilter" onchange="updateStoreView()">
+                                <option value="store">按门店</option>
+                                <option value="doctor">按医生</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container" id="storeChart"></div>
+                </div>
+            </div>
+
+            <div class="grid-row row-3">
+                <div class="panel panel-large">
+                    <div class="panel-header">
+                        <h3>🔻 项目转化漏斗</h3>
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-category="all" onclick="updateFunnel('all')">全部</button>
+                            <button class="filter-btn" data-category="skin" onclick="updateFunnel('skin')">皮肤</button>
+                            <button class="filter-btn" data-category="dental" onclick="updateFunnel('dental')">口腔</button>
+                            <button class="filter-btn" data-category="light" onclick="updateFunnel('light')">轻医美</button>
+                            <button class="filter-btn" data-category="surgery" onclick="updateFunnel('surgery')">整形外科</button>
+                        </div>
+                    </div>
+                    <div class="funnel-wrapper">
+                        <div class="chart-container" id="funnelChart"></div>
+                        <div class="funnel-insight">
+                            <h4>💡 漏斗洞察</h4>
+                            <div class="insight-list" id="funnelInsight">
+                                <div class="insight-item high-risk">
+                                    <span class="dot"></span>
+                                    <strong>皮肤项目：</strong>咨询→预约环节流失41%，建议优化咨询话术
+                                </div>
+                                <div class="insight-item mid-risk">
+                                    <span class="dot warn"></span>
+                                    <strong>轻医美：</strong>预约→到院流失28%，需加强到院提醒机制
+                                </div>
+                                <div class="insight-item low-risk">
+                                    <span class="dot ok"></span>
+                                    <strong>整形外科：</strong>到院→成交转化率58%，表现优秀
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-row row-4">
+                <div class="panel panel-medium">
+                    <div class="panel-header">
+                        <h3>👥 客服绩效排行</h3>
+                        <span class="panel-tip">接待量 · 有效占比 · 首响时长</span>
+                    </div>
+                    <div class="chart-container" id="staffChart"></div>
+                </div>
+                <div class="panel panel-medium">
+                    <div class="panel-header">
+                        <h3>⏱ 成交周期追踪</h3>
+                        <span class="panel-tip">咨询→成交天数分布</span>
+                    </div>
+                    <div class="chart-container" id="cycleChart"></div>
+                </div>
+            </div>
+
+            <div class="grid-row row-5">
+                <div class="panel panel-large">
+                    <div class="panel-header">
+                        <h3>🚨 异常预警中心</h3>
+                        <div class="filter-group">
+                            <button class="filter-btn active" onclick="filterAlert('all')">全部</button>
+                            <button class="filter-btn" onclick="filterAlert('night')">夜间漏接</button>
+                            <button class="filter-btn" onclick="filterAlert('repeat')">重复分配</button>
+                            <button class="filter-btn" onclick="filterAlert('timeout')">超时未跟进</button>
+                            <button class="filter-btn" onclick="filterAlert('highValue')">高值流失</button>
+                        </div>
+                    </div>
+                    <div class="alert-stats">
+                        <div class="alert-stat critical">
+                            <div class="stat-num">23</div>
+                            <div class="stat-label">夜间漏接</div>
+                            <div class="stat-bar"><span style="width:75%"></span></div>
+                        </div>
+                        <div class="alert-stat warning">
+                            <div class="stat-num">47</div>
+                            <div class="stat-label">重复分配</div>
+                            <div class="stat-bar"><span style="width:62%"></span></div>
+                        </div>
+                        <div class="alert-stat danger">
+                            <div class="stat-num">86</div>
+                            <div class="stat-label">超时未跟进</div>
+                            <div class="stat-bar"><span style="width:88%"></span></div>
+                        </div>
+                        <div class="alert-stat purple">
+                            <div class="stat-num">12</div>
+                            <div class="stat-label">高值流失</div>
+                            <div class="stat-bar"><span style="width:40%"></span></div>
+                        </div>
+                    </div>
+                    <div class="alert-table-wrapper">
+                        <table class="alert-table" id="alertTable">
+                            <thead>
+                                <tr>
+                                    <th>类型</th>
+                                    <th>平台</th>
+                                    <th>客户姓名</th>
+                                    <th>意向项目</th>
+                                    <th>预算区间</th>
+                                    <th>问题描述</th>
+                                    <th>分配客服</th>
+                                    <th>发生时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alertTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-row row-6">
+                <div class="panel panel-large">
+                    <div class="panel-header">
+                        <h3>📋 每日晨会复盘清单</h3>
+                        <div class="action-group">
+                            <button class="action-btn primary" onclick="generateReport()">🎯 生成复盘报告</button>
+                            <button class="action-btn success" onclick="exportData('all')">📥 导出全部数据</button>
+                            <button class="action-btn info" onclick="exportData('ad')">📤 导出投放调整</button>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <div class="review-section">
+                            <h4 class="review-title">📊 昨日数据复盘</h4>
+                            <div class="review-grid">
+                                <div class="review-card">
+                                    <div class="review-head good">✅ 达标项目</div>
+                                    <ul class="review-list">
+                                        <li>整形外科到院率 <strong>71.2%</strong>（目标65%）</li>
+                                        <li>口腔项目ROI <strong>1:4.5</strong>（目标1:3.5）</li>
+                                        <li>客服张XX首响 <strong>2.3分钟</strong>（标准≤5分钟）</li>
+                                        <li>朝阳门店预约率 <strong>42.8%</strong>（目标35%）</li>
+                                    </ul>
+                                </div>
+                                <div class="review-card">
+                                    <div class="review-head bad">❌ 未达标项目</div>
+                                    <ul class="review-list">
+                                        <li>新氧首响时长 <strong>18分钟</strong>（标准≤5分钟）</li>
+                                        <li>皮肤项目接通率 <strong>62%</strong>（目标80%）</li>
+                                        <li>客服李XX有效线索 <strong>28%</strong>（均值45%）</li>
+                                        <li>海淀门店到院率 <strong>48%</strong>（目标60%）</li>
+                                    </ul>
+                                </div>
+                                <div class="review-card">
+                                    <div class="review-head warn">⚠ 今日重点</div>
+                                    <ul class="review-list">
+                                        <li>优先追回夜间漏接的 <strong>8条</strong> 高意向线索</li>
+                                        <li>皮肤项目咨询话术培训（14:00）</li>
+                                        <li>12条高预算流失客户二次跟进</li>
+                                        <li>新氧渠道首响流程优化研讨</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-section">
+                            <h4 class="review-title">🎯 投放调整建议（给投放人员）</h4>
+                            <div class="adjustment-table">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>平台</th>
+                                            <th>调整方向</th>
+                                            <th>套餐/关键词</th>
+                                            <th>当前数据</th>
+                                            <th>建议动作</th>
+                                            <th>预期效果</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="tag mt">美团</span></td>
+                                            <td class="up">预算加码</td>
+                                            <td>热玛吉抗衰套餐</td>
+                                            <td>ROI 1:5.8 | 到院率72%</td>
+                                            <td>预算+30%，拓展"抗衰"长尾词</td>
+                                            <td>月增线索80+</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="tag mt">美团</span></td>
+                                            <td class="down">预算收缩</td>
+                                            <td>祛痘体验套餐99元</td>
+                                            <td>ROI 1:1.2 | 到院率38%</td>
+                                            <td>暂停投放，优化套餐权益设计</td>
+                                            <td>减少浪费2万/月</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="tag xy">新氧</span></td>
+                                            <td class="up">关键词优化</td>
+                                            <td>"鼻综合""眼修复"</td>
+                                            <td>CPC 18元 | 转化率3.2%</td>
+                                            <td>提高出价，拓展"修复"相关词</td>
+                                            <td>线索+25%，客单提升</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="tag xy">新氧</span></td>
+                                            <td class="down">关停低效</td>
+                                            <td>"双眼皮埋线"通用词</td>
+                                            <td>CPC 25元 | 到院率28%</td>
+                                            <td>转移预算至"眼综合"精准词</td>
+                                            <td>ROI提升40%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="tag mt">美团</span></td>
+                                            <td class="warn">新拓词包</td>
+                                            <td>医美+地域组合词</td>
+                                            <td>（待测试）</td>
+                                            <td>上线"朝阳医美""海淀抗衰"等</td>
+                                            <td>低成本高意向流量</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="modal-overlay" id="drillModal">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 id="modalTitle">下钻详情</h3>
+                    <button class="modal-close" onclick="closeModal()">✕</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
